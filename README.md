@@ -1,3 +1,6 @@
+# This fork?
+Allows multiple domains to point to the reverse proxy tunnel in case you are using docker and nginx on your development computer
+
 # What is it?
 
 If you have a webserver running on one computer (say your development laptop),
@@ -17,10 +20,10 @@ If you have:
 And you run the following command on your laptop:
 
 ```bash
-ssh -tR 9001:localhost:8080 example.com sirtunnel.py sub1.example.com 9001
+ssh -tR 9001:localhost:8080 example.com sirtunnel.py 9001 sub1.example.com sub2.example.com
 ```
 
-Now any requests to `https://sub1.example.com` will be proxied to your local
+Now any requests to `https://sub1.example.com` and `https://sub2.example.com` will be proxied to your local
 webserver.
 
 
@@ -30,10 +33,10 @@ The command above does 2 things:
 
 1. It starts a standard [remote SSH tunnel][2] from the server port 9001 to
    local port 8080.
-2. It runs the command `sirtunnel.py sub1.example.com 9001` on the server.
-   The python script parses `sub1.example.com 9001` and uses the Caddy API to
-   reverse proxy `sub1.example.com` to port 9001 on the server. Caddy
-   automatically retrieves an HTTPS cert for `sub1.example.com`.
+2. It runs the command `sirtunnel.py 9001 sub1.example.com sub2example.com` on the server.
+   The python script parses the parameters and uses the Caddy API to
+   reverse proxy both domains to port 9001 on the server. Caddy
+   automatically retrieves an HTTPS cert for all domains.
 
 **Note:** The `-t` is necessary so that doing CTRL-C on your laptop stops the
 `sirtunnel.py` command on the server, which allows it to clean up the tunnel
@@ -76,19 +79,3 @@ recommended), setting the `CAP_NET_BIND_SERVICE` capability on the Caddy binary
 (what the `install.sh` script does), or changing `caddy_config.json` to bind
 to a different port (say 9000) and using something like iptables to forward
 to that port.
-
-# Future Features
-
-SirTunnel is intended to be a minimal tool. As such, I'm unlikely to add many
-features moving forward. However, the simplicity makes it easier to modify
-for your needs. For example, see this fork which adds functionality to help
-multiple users avoid overwriting each others' tunnels:
-
-https://github.com/matiboy/SirTunnel
-
-
-[0]: https://github.com/anderspitman/awesome-tunneling
-
-[1]: https://caddyserver.com/
-
-[2]: https://www.ssh.com/ssh/tunneling/example#remote-forwarding
