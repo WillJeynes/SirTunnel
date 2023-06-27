@@ -8,14 +8,16 @@ from urllib import request
 
 if __name__ == '__main__':
 
-    host = sys.argv[1]
-    port = sys.argv[2]
-    tunnel_id = host + '-' + port
+    port = sys.argv[1]
+    hosts = sys.argv
+    del hosts[0]
+    del hosts[0]
+    tunnel_id = hosts[0] + '-' + port
 
     caddy_add_route_request = {
         "@id": tunnel_id,
         "match": [{
-            "host": [host],
+            "host": hosts,
         }],
         "handle": [{
             "handler": "reverse_proxy",
